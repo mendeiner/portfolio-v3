@@ -35,6 +35,6 @@ jobs:
           lftp -u brunoedita,"$FTP_PASSWORD" ftp.brunoedita.com.br << 'EOF'
           set ssl:verify-certificate no
           set ftp:passive-mode on
-          mirror --reverse --parallel=4 --verbose dist /home/brunoedita/www
+          mirror --reverse --parallel=4 --verbose dist .
           bye
           EOF
