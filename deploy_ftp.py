@@ -12,6 +12,7 @@ FTP_PASS = os.environ["FTP_PASSWORD"]
 LOCAL_DIR = "dist"
 MANIFEST_FILE = "deploy_manifest.json"
 EXCLUDE_DIRS = {"videos"}
+EXCLUDE_FILES = {".DS_Store", "Thumbs.db"}
 
 def md5(filepath):
     h = hashlib.md5()
@@ -58,6 +59,8 @@ errors = 0
 for root, dirs, files in os.walk(LOCAL_DIR):
     dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
     for filename in files:
+        if filename in EXCLUDE_FILES:
+            continue
         local_path = os.path.join(root, filename)
         rel_path = os.path.relpath(local_path, LOCAL_DIR).replace(os.sep, "/")
         file_hash = md5(local_path)
