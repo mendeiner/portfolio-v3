@@ -1,7 +1,8 @@
 import os
 import hashlib
 import json
-from ftplib import FTP, error_perm
+import ssl
+from ftplib import FTP_TLS, error_perm
 import io
 import sys
 
@@ -29,9 +30,14 @@ def ensure_remote_dir(ftp, remote_dir):
         except error_perm:
             pass  # already exists
 
-ftp = FTP()
+ctx = ssl.create_default_context()
+ctx.check_hostname = False
+ctx.verify_mode = ssl.CERT_NONE
+
+ftp = FTP_TLS(context=ctx)
 ftp.connect(FTP_HOST, 21)
 ftp.login(FTP_USER, FTP_PASS)
+ftp.prot_p()  # encrypt data channel
 ftp.set_pasv(True)
 
 # Load manifest from server (tracks file hashes from last deploy)
