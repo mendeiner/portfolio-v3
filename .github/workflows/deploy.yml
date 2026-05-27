@@ -25,16 +25,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Install lftp
-        run: sudo apt-get install -y lftp
-
-      - name: Deploy to KingHost via FTP
+      - name: Deploy to KingHost (changed files only)
         env:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        run: |
-          lftp -u brunoedita,"$FTP_PASSWORD" ftp.brunoedita.com.br << 'EOF'
-          set ssl:verify-certificate no
-          set ftp:passive-mode on
-          mirror --reverse --parallel=4 --verbose --exclude videos/ dist .
-          bye
-          EOF
+        run: python3 deploy_ftp.py
