@@ -9,7 +9,7 @@ FTP_HOST = "ftp.brunoedita.com.br"
 FTP_USER = "brunoedita"
 FTP_PASS = os.environ["FTP_PASSWORD"]
 LOCAL_DIR = "dist"
-MANIFEST_FILE = ".deploy_manifest.json"
+MANIFEST_FILE = "deploy_manifest.json"
 EXCLUDE_DIRS = {"videos"}
 
 def md5(filepath):
