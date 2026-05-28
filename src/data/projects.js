@@ -1,5 +1,7 @@
 import videoManifest from 'virtual:video-manifest'
 
+const BASE = import.meta.env.BASE_URL
+
 function videos(slug) {
   const paths = videoManifest[slug] || []
   return {
@@ -12,7 +14,7 @@ export const projects = [
   {
     slug: 'iron-beer',
     client: 'IRON BEER',
-    logo: '/logos/iron-beer.png',
+    logo: `${BASE}logos/iron-beer.png`,
     category: 'brand',
     brief: 'brand film — produto + fundadores',
     year: '2024',
@@ -22,7 +24,7 @@ export const projects = [
   {
     slug: 'melissa',
     client: 'MELISSA',
-    logo: '/logos/melissa.png',
+    logo: `${BASE}logos/melissa.png`,
     category: 'founder',
     brief: 'founder film — posicionamento de marca',
     year: '2025',
@@ -32,7 +34,7 @@ export const projects = [
   {
     slug: 'sicredi',
     client: 'SICREDI',
-    logo: '/logos/sicredi.png',
+    logo: `${BASE}logos/sicredi.png`,
     category: 'founder',
     brief: 'founder content — série de posicionamento',
     year: '2025',
@@ -42,7 +44,7 @@ export const projects = [
   {
     slug: 'antonielle',
     client: 'ANTONIELLE',
-    logo: '/logos/antonielle.png',
+    logo: `${BASE}logos/antonielle.png`,
     category: 'brand',
     brief: 'reels recorrentes — founder + coleção verão',
     year: '2025',
@@ -52,7 +54,7 @@ export const projects = [
   {
     slug: 'bayo-coffee',
     client: 'BAYO COFFEE',
-    logo: '/logos/bayo-coffee.png',
+    logo: `${BASE}logos/bayo-coffee.png`,
     category: 'brand',
     brief: 'brand film — identidade de produto',
     year: '2025',
@@ -62,7 +64,7 @@ export const projects = [
   {
     slug: 'green-station',
     client: 'GREEN STATION',
-    logo: '/logos/green-station.png',
+    logo: `${BASE}logos/green-station.png`,
     category: 'lancamento',
     brief: 'lançamento — campanha de produto',
     year: '2025',
@@ -72,7 +74,7 @@ export const projects = [
   {
     slug: 'santa-pizza',
     client: 'SANTA PIZZA',
-    logo: '/logos/santa-pizza.png',
+    logo: `${BASE}logos/santa-pizza.png`,
     category: 'brand',
     brief: 'brand content — série recorrente',
     year: '2024',
@@ -82,7 +84,7 @@ export const projects = [
   {
     slug: 'rossato',
     client: 'ROSSATO',
-    logo: '/logos/rossato.png',
+    logo: `${BASE}logos/rossato.png`,
     category: 'founder',
     brief: 'founder content — posicionamento',
     year: '2024',
@@ -92,7 +94,7 @@ export const projects = [
   {
     slug: 'noe',
     client: 'NOÉ',
-    logo: '/logos/noe.png',
+    logo: `${BASE}logos/noe.png`,
     category: 'brand',
     brief: 'brand film — manifesto',
     year: '2024',
@@ -102,7 +104,7 @@ export const projects = [
   {
     slug: 'olpe',
     client: 'OLPE',
-    logo: '/logos/olpe.png',
+    logo: `${BASE}logos/olpe.png`,
     category: 'brand',
     brief: 'brand film — produto',
     year: '2024',
@@ -112,7 +114,7 @@ export const projects = [
   {
     slug: 'turuna',
     client: 'TURUNA',
-    logo: '/logos/turuna.png',
+    logo: `${BASE}logos/turuna.png`,
     category: 'brand',
     brief: 'brand film — identidade',
     year: '2025',
@@ -122,7 +124,7 @@ export const projects = [
   {
     slug: 'sesc',
     client: 'SESC',
-    logo: '/logos/sesc.png',
+    logo: `${BASE}logos/sesc.png`,
     category: 'brand',
     brief: 'brand film — corrida de mascotes',
     year: '2025',
@@ -132,7 +134,7 @@ export const projects = [
   {
     slug: 'aurora',
     client: 'AURORA',
-    logo: '/logos/iron-beer.png',
+    logo: `${BASE}logos/iron-beer.png`,
     category: 'brand',
     brief: 'brand film',
     year: '2025',
@@ -142,7 +144,7 @@ export const projects = [
   {
     slug: 'turim',
     client: 'TURIM',
-    logo: '/logos/iron-beer.png',
+    logo: `${BASE}logos/iron-beer.png`,
     category: 'brand',
     brief: 'brand film',
     year: '2025',
@@ -152,7 +154,7 @@ export const projects = [
   {
     slug: 'zen',
     client: 'ZEN',
-    logo: '/logos/iron-beer.png',
+    logo: `${BASE}logos/iron-beer.png`,
     category: 'brand',
     brief: 'brand film',
     year: '2025',

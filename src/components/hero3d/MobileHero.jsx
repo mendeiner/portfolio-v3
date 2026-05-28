@@ -1,8 +1,8 @@
-import { useContext, useRef, useEffect } from 'react'
+import { useContext, useRef, useEffect, useCallback } from 'react'
 import { LoadingContext } from '../../App'
+import { useVolume } from '../../context/VolumeContext'
 
 // Screen bounds within the hand-phone.png (as % of the PNG's intrinsic 1:1 frame).
-// Captured from the ExportHand tool.
 const SCREEN_BOUNDS = {
   top: '10.198%',
   left: '36.369%',
@@ -10,66 +10,96 @@ const SCREEN_BOUNDS = {
   height: '65.722%',
 }
 
-// Square frame. Capped at 65vh on mobile (bottom-center), 85vh on desktop
-// (bottom-right). translate-y-[8%] pushes the hand slightly below the hero
-// baseline so it reads as anchored to the bottom edge.
-// translate-y-[8%] is intentionally excluded here — the hand-slide-up
-// animation handles the final resting offset via fill-mode:both.
-// Before loading, translate-y-full keeps it offscreen so the animation
-// start state matches with no visible jump.
 const FRAME_BASE =
   'relative w-full aspect-square max-h-[65vh] max-w-[65vh] ' +
-  'md:max-h-[85vh] md:max-w-[85vh]'
+  'md:max-h-[102vh] md:max-w-[102vh] md:translate-y-6'
 
 const WRAPPER_CLASS =
   'absolute inset-0 flex items-end justify-center ' +
-  'md:justify-end md:pr-8 lg:pr-16 overflow-hidden'
+  'md:justify-end md:-mr-6 lg:-mr-10 overflow-x-hidden'
 
-export function MobileHero({ isMuted, volume }) {
+export function MobileHero() {
   const videoRef = useRef(null)
   const loaded = useContext(LoadingContext)
+  const { isMuted, volume } = useVolume()
   const frameClass = loaded ? `${FRAME_BASE} hand-slide-up` : `${FRAME_BASE} translate-y-full`
 
   // Ref callback runs SYNCHRONOUSLY when the <video> mounts. Mobile autoplay
   // policies decide "muted vs unmuted" the moment src starts loading, so we
-  // must set muted BEFORE src. React's JSX renders src first (as attribute)
-  // and muted second (as property), which is the wrong order — we work
-  // around that by leaving src out of the JSX entirely and assigning it here.
-  const setVideoRef = (el) => {
+  // must set muted BEFORE src.
+  const setVideoRef = useCallback((el) => {
     videoRef.current = el
     if (!el) return
-    // Muted state, set first via both attribute and property.
     el.muted = true
     el.defaultMuted = true
     el.setAttribute('muted', '')
-    // Inline playback (no fullscreen takeover on iOS).
     el.playsInline = true
     el.setAttribute('playsinline', '')
     el.setAttribute('webkit-playsinline', '')
     el.setAttribute('autoplay', '')
     el.loop = true
     el.preload = 'auto'
-    // src set LAST — after muted is committed — so the browser's autoplay
-    // decision is based on a muted element.
     if (el.src !== window.location.origin + '/videos/reel.webm') {
       el.src = '/videos/reel.webm'
     }
     const tryPlay = () => el.play().catch(() => {})
     tryPlay()
     el.addEventListener('canplay', tryPlay, { once: true })
-  }
+  }, [])
 
+  const volumeRef = useRef(volume)
+  useEffect(() => { volumeRef.current = volume }, [volume])
+
+  // Effect 1: mute/unmute transitions only — touching muted attribute here is safe
   useEffect(() => {
     const v = videoRef.current
     if (!v) return
-    v.muted = isMuted
-    v.volume = isMuted ? 0 : (volume ?? 0.8)
-    v.play().catch(() => {})
-  }, [isMuted, volume])
+    if (isMuted) {
+      v.muted = true
+      v.volume = 0
+    } else {
+      v.removeAttribute('muted')
+      v.muted = false
+      v.volume = volumeRef.current
+      if (v.paused) v.play().catch(() => {})
+    }
+  }, [isMuted])
 
-  // Fallback: if autoplay was blocked (e.g. iOS Low Power Mode), the FIRST
-  // user gesture anywhere on the page will start playback. This is what
-  // makes the volume-button click work today — we generalize it to any tap.
+  // Effect 2: volume slider — only sets v.volume, never touches muted attribute
+  useEffect(() => {
+    const v = videoRef.current
+    if (!v || isMuted) return
+    v.volume = volume
+  }, [volume, isMuted])
+
+  // Pause when hero scrolls out of view, resume when back
+  useEffect(() => {
+    const section = document.getElementById('hero-section')
+    if (!section) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const v = videoRef.current
+        if (!v) return
+        if (entry.isIntersecting) {
+          v.play().catch(() => {})
+        } else {
+          v.pause()
+        }
+      },
+      { threshold: 0.5 }
+    )
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [])
+
+  // Pause on unmount (navigating away)
+  useEffect(() => {
+    return () => {
+      if (videoRef.current) videoRef.current.pause()
+    }
+  }, [])
+
+  // Fallback: first user gesture starts playback if autoplay was blocked
   useEffect(() => {
     const start = () => {
       const v = videoRef.current
@@ -85,11 +115,10 @@ export function MobileHero({ isMuted, volume }) {
 
   return (
     <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-      {/* Backdrop: hand+phone PNG + video. Sits behind hero text (z-30). */}
       <div className={WRAPPER_CLASS} style={{ zIndex: 0 }}>
         <div className={frameClass}>
           <img
-            src="/images/hand-phone.png"
+            src={`${import.meta.env.BASE_URL}images/hand-phone.png`}
             alt=""
             className="absolute inset-0 w-full h-full object-contain"
             loading="eager"
@@ -97,7 +126,6 @@ export function MobileHero({ isMuted, volume }) {
           />
           <video
             ref={setVideoRef}
-            src="/videos/reel.webm"
             autoPlay
             loop
             muted
@@ -115,12 +143,11 @@ export function MobileHero({ isMuted, volume }) {
         </div>
       </div>
 
-      {/* Foreground: hand-only cutout. Sits IN FRONT of hero text (z-30),
-          so the fingers/thumb visually wrap over both the video and the text. */}
+      {/* Foreground hand cutout sits in front of hero text (z-30) */}
       <div className={WRAPPER_CLASS} style={{ zIndex: 40 }}>
         <div className={frameClass}>
           <img
-            src="/images/hand.png"
+            src={`${import.meta.env.BASE_URL}images/hand.png`}
             alt=""
             className="absolute inset-0 w-full h-full object-contain"
             loading="eager"

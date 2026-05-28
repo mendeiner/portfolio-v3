@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from './ui/carousel'
+import { useVolume } from '../context/VolumeContext'
 
 const isHorizontalFile = (src) => src && /1080/i.test(src)
 
@@ -41,7 +42,7 @@ export default function ProjectCarousel({ project }) {
 
   const single = slides.length === 1
   const [hovered, setHovered] = useState(null)
-  const [volume, setVolume] = useState(0.8)
+  const { volume, setVolume } = useVolume()
   const [isPlaying, setIsPlaying] = useState(true)
   const [flashIcon, setFlashIcon] = useState(null)
   const [isLandscape, setIsLandscape] = useState(false)

@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { LoadingContext } from '../App'
+import { useVolume } from '../context/VolumeContext'
 import AsterMark from '../components/AsterMark'
 import { HeroCanvas } from '../components/hero3d/HeroCanvas'
 import ClientStrip from '../components/ClientStrip'
@@ -47,8 +48,7 @@ const makeLetters = (wordIdx, word) => [
 export default function Home() {
   const loaded = useContext(LoadingContext)
 
-  const [isMuted, setIsMuted] = useState(true)
-  const [volume, setVolume] = useState(0.8)
+  const { isMuted, setIsMuted, volume, setVolume } = useVolume()
 
   const beliefSectionRef = useRef(null)
   const para1Ref = useRef(null)
@@ -162,9 +162,9 @@ export default function Home() {
   return (
     <>
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section id="hero-section" className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-between bg-navy px-6 md:px-10 pt-8 pb-8 overflow-hidden">
+      <section id="hero-section" className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-between bg-navy px-6 md:px-10 pt-8 pb-8 overflow-x-hidden">
 
-        <HeroCanvas isMuted={isMuted} volume={volume} />
+        <HeroCanvas />
 
         {/* Sound toggle + volume slider */}
         <div className="absolute bottom-8 right-6 md:right-10 z-50 flex flex-col items-center gap-3 pointer-events-auto">
@@ -295,7 +295,7 @@ export default function Home() {
       <section ref={beliefSectionRef} className="border-t border-paper/10 grid md:grid-cols-2 min-h-[100vh]">
         <div className="relative overflow-hidden min-h-[60vh] md:min-h-0 md:h-full">
           <img
-            src="/IMG_0353.jpg"
+            src={`${import.meta.env.BASE_URL}IMG_0353.jpg`}
             alt="Bruno"
             loading="lazy"
             decoding="async"

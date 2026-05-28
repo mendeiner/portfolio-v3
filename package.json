@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:github": "GITHUB_PAGES=true vite build",
+    "deploy:github": "rm -rf node_modules/.cache/gh-pages && npm run build:github && rm -rf dist/videos && gh-pages -d dist",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -30,6 +32,7 @@
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "gh-pages": "^6.3.0",
     "globals": "^17.6.0",
     "leva": "^0.10.1",
     "vite": "^8.0.12"

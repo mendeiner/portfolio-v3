@@ -1,11 +1,11 @@
-import { useState, useEffect, Suspense } from 'react'
+import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Environment } from '@react-three/drei'
 import { PhoneModel } from './PhoneModel'
 import { MobileHero } from './MobileHero'
 import { useScrollProgress } from './useScrollProgress'
 
-function DesktopCanvas({ isMuted, volume }) {
+function DesktopCanvas() {
   const scrollProgress = useScrollProgress('#hero-section')
 
   return (
@@ -29,21 +29,16 @@ function DesktopCanvas({ isMuted, volume }) {
         <Environment preset="city" />
 
         <Suspense fallback={null}>
-          <PhoneModel scrollProgress={scrollProgress} isMuted={isMuted} volume={volume} />
+          <PhoneModel scrollProgress={scrollProgress} />
         </Suspense>
       </Canvas>
     </div>
   )
 }
 
-// Synchronously check viewport on first render so mobile devices never
-// momentarily mount the WebGL Canvas (which would start loading Three.js +
-// the GLB before being torn down on the next render).
-const detectMobile = () => typeof window !== 'undefined' && window.innerWidth < 768
-
-export function HeroCanvas({ isMuted, volume }) {
+export function HeroCanvas() {
   // 2D hand used on both mobile and desktop. The 3D path (DesktopCanvas +
   // PhoneModel) is preserved above as a backup — to restore it, branch on
-  // `detectMobile()` like before.
-  return <MobileHero isMuted={isMuted} volume={volume} />
+  // window.innerWidth like before.
+  return <MobileHero />
 }

@@ -49,6 +49,7 @@ class App(tk.Tk):
 
         self._build_git_section()
         self._build_deploy_section()
+        self._build_github_section()
         self._build_output_section()
 
     def _build_git_section(self):
@@ -135,6 +136,25 @@ class App(tk.Tk):
         self.b_deploy.pack(side='left', padx=(0, 6))
         self.b_bdall.pack(side='right')
 
+    def _build_github_section(self):
+        frame = self._card(" GitHub Pages — preview URL ")
+
+        row = tk.Frame(frame, bg=CARD)
+        row.pack(fill='x', pady=1)
+        tk.Label(row, text="  mendeiner.github.io/portfolio-v3",
+                 font=(MONO[0], MONO[1], 'bold'), bg=CARD, fg=YELLOW).pack(side='left')
+
+        desc_row = tk.Frame(frame, bg=CARD)
+        desc_row.pack(fill='x', pady=(2, 8))
+        tk.Label(desc_row, text="  Builds with GitHub base path and pushes to gh-pages branch",
+                 font=FONT, bg=CARD, fg=FG).pack(side='left')
+
+        btn_row = tk.Frame(frame, bg=CARD)
+        btn_row.pack(fill='x')
+        self.b_ghpages = self._btn(btn_row, "▶  Build + Publish to GitHub Pages",
+                                    self._deploy_github, ACCENT)
+        self.b_ghpages.pack(side='left')
+
     def _build_output_section(self):
         out_lf = tk.LabelFrame(self, text=" Output ", font=FONT,
                                 bg=BG, fg=ACCENT, bd=0, padx=4, pady=4)
@@ -178,7 +198,7 @@ class App(tk.Tk):
 
     def _all_buttons(self):
         return [self.b_add, self.b_commit, self.b_push, self.b_gitall,
-                self.b_build, self.b_deploy, self.b_bdall]
+                self.b_build, self.b_deploy, self.b_bdall, self.b_ghpages]
 
     def _set_buttons(self, enabled):
         state = 'normal' if enabled else 'disabled'
@@ -272,6 +292,9 @@ class App(tk.Tk):
         if env is None:
             return
         self._thread(lambda: self._exec("python3 deploy_ftp.py", env=env))
+
+    def _deploy_github(self):
+        self._thread(lambda: self._exec("npm run deploy:github"))
 
     def _build_and_deploy(self):
         env = self._ftp_env()

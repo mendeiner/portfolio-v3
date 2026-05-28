@@ -3,6 +3,7 @@ import { createContext, useEffect, useState, lazy, Suspense } from 'react'
 import Nav from './components/Nav'
 import Home from './pages/Home'
 import LoadingScreen from './components/LoadingScreen'
+import { VolumeProvider } from './context/VolumeContext'
 
 const Work = lazy(() => import('./pages/Work'))
 const WorkDetail = lazy(() => import('./pages/WorkDetail'))
@@ -20,19 +21,21 @@ export default function App() {
   const [loaded, setLoaded] = useState(false)
 
   return (
-    <LoadingContext.Provider value={loaded}>
-      {!loaded && <LoadingScreen onDone={() => setLoaded(true)} />}
-      <ScrollToTop />
-      <Nav />
-      <main className="pt-16 overflow-x-hidden">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/work" element={<Suspense fallback={null}><Work /></Suspense>} />
-          <Route path="/work/:slug" element={<Suspense fallback={null}><WorkDetail /></Suspense>} />
-          <Route path="/about" element={<Navigate to="/" replace />} />
-          <Route path="/contact" element={<Suspense fallback={null}><Contact /></Suspense>} />
-        </Routes>
-      </main>
-    </LoadingContext.Provider>
+    <VolumeProvider>
+      <LoadingContext.Provider value={loaded}>
+        {!loaded && <LoadingScreen onDone={() => setLoaded(true)} />}
+        <ScrollToTop />
+        <Nav />
+        <main className="pt-16 overflow-x-hidden">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/work" element={<Suspense fallback={null}><Work /></Suspense>} />
+            <Route path="/work/:slug" element={<Suspense fallback={null}><WorkDetail /></Suspense>} />
+            <Route path="/about" element={<Navigate to="/" replace />} />
+            <Route path="/contact" element={<Suspense fallback={null}><Contact /></Suspense>} />
+          </Routes>
+        </main>
+      </LoadingContext.Provider>
+    </VolumeProvider>
   )
 }

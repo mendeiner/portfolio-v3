@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, useVideoTexture } from '@react-three/drei'
 import * as THREE from 'three'
+import { useVolume } from '../../context/VolumeContext'
 
 const SCREEN_NODE = 'pCube19_manoparazetatratadaenzeta2aiFlat1_0'
 const BEZEL_NODE  = 'manoparazetatratadaenzeta2pCube19_lambert1_0'
@@ -18,7 +19,8 @@ const ROT_Z = 1.45
 const POS = { x: -2.4, y: -0.5, z: 0.7 }
 const ENTRANCE_DURATION = 1.2
 
-export function PhoneModel({ scrollProgress, isMuted, volume }) {
+export function PhoneModel({ scrollProgress }) {
+  const { isMuted, volume } = useVolume()
   const group = useRef()
   const innerGroup = useRef()
   const meshesRef = useRef([])
@@ -30,7 +32,7 @@ export function PhoneModel({ scrollProgress, isMuted, volume }) {
   const MOBILE_POS = { x: -3.4, y: -1.2, z: -0.7 }
   const pos = isMobile ? MOBILE_POS : POS
   const scale = isMobile ? 0.20 : 0.25
-  const { scene } = useGLTF('/models/hand-phone.glb')
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/hand-phone.glb`)
 
   const videoTexture = useVideoTexture('/videos/reel.webm', {
     muted: true,
@@ -42,9 +44,17 @@ export function PhoneModel({ scrollProgress, isMuted, volume }) {
   useEffect(() => {
     const video = videoTexture?.image
     if (!video) return
-    video.muted = isMuted
-    video.volume = isMuted ? 0 : (volume ?? 0.8)
-    if (!isMuted) video.play().catch(() => {})
+    if (isMuted) {
+      video.muted = true
+      video.volume = 0
+    } else {
+      // removeAttribute is required — setting video.muted = false alone doesn't
+      // clear the HTML muted attribute that useVideoTexture sets on creation
+      video.removeAttribute('muted')
+      video.muted = false
+      video.volume = volume ?? 0.8
+      if (video.paused) video.play().catch(() => {})
+    }
   }, [isMuted, volume, videoTexture])
 
   // Pause video on unmount (navigation away)
@@ -151,4 +161,4 @@ export function PhoneModel({ scrollProgress, isMuted, volume }) {
   )
 }
 
-useGLTF.preload('/models/hand-phone.glb')
+useGLTF.preload(`${import.meta.env.BASE_URL}models/hand-phone.glb`)

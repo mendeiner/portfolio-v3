@@ -6,6 +6,7 @@ import { resolve } from 'path'
 function videoManifestPlugin() {
   const VIRTUAL_ID = 'virtual:video-manifest'
   const RESOLVED_ID = '\0virtual:video-manifest'
+  let base = '/'
 
   function buildManifest() {
     const videosDir = resolve('./public/videos')
@@ -23,7 +24,7 @@ function videoManifestPlugin() {
           return a.localeCompare(b)
         })
       if (files.length) {
-        manifest[entry.name] = files.map(f => `/videos/${entry.name}/${f}`)
+        manifest[entry.name] = files.map(f => `${base}videos/${entry.name}/${f}`)
       }
     }
     return manifest
@@ -31,6 +32,9 @@ function videoManifestPlugin() {
 
   return {
     name: 'video-manifest',
+    configResolved(resolvedConfig) {
+      base = resolvedConfig.base
+    },
     resolveId(id) {
       if (id === VIRTUAL_ID) return RESOLVED_ID
     },
@@ -52,7 +56,10 @@ function videoManifestPlugin() {
   }
 }
 
+const base = process.env.GITHUB_PAGES === 'true' ? '/portfolio-v3/' : '/'
+
 export default defineConfig({
+  base,
   plugins: [react(), videoManifestPlugin()],
   optimizeDeps: {
     include: ['three'],
