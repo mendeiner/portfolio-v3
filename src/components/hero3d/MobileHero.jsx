@@ -12,7 +12,7 @@ const SCREEN_BOUNDS = {
 
 const FRAME_BASE =
   'relative w-full aspect-square max-h-[65vh] max-w-[65vh] ' +
-  'md:max-h-[102vh] md:max-w-[102vh] md:translate-y-6'
+  'md:max-h-[102vh] md:max-w-[102vh]'
 
 const WRAPPER_CLASS =
   'absolute inset-0 flex items-end justify-center ' +
