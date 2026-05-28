@@ -1,0 +1,12 @@
+name: Build and Deploy to KingHost
+
+# Deployment runs locally via: npm run build && FTP_PASSWORD=... python3 deploy_ftp.py
+# KingHost blocks FTP writes from external IPs — must deploy from your own machine.
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploy locally with deploy_ftp.py"
