@@ -11,8 +11,8 @@ const SCREEN_BOUNDS = {
 }
 
 const FRAME_BASE =
-  'relative w-full aspect-square max-h-[65vh] max-w-[65vh] ' +
-  'md:max-h-[102vh] md:max-w-[102vh]'
+  'relative h-[65vh] w-[65vh] shrink-0 ' +
+  'md:h-auto md:w-full md:aspect-square md:max-h-[102vh] md:max-w-[102vh]'
 
 const WRAPPER_CLASS =
   'absolute inset-0 flex items-end justify-center ' +
@@ -23,6 +23,7 @@ export function MobileHero() {
   const loaded = useContext(LoadingContext)
   const { isMuted, volume } = useVolume()
   const frameClass = loaded ? `${FRAME_BASE} hand-slide-up` : `${FRAME_BASE} translate-y-full`
+  const frameStyle = loaded ? undefined : { transform: 'translateY(100%)' }
 
   // Ref callback runs SYNCHRONOUSLY when the <video> mounts. Mobile autoplay
   // policies decide "muted vs unmuted" the moment src starts loading, so we
@@ -39,8 +40,9 @@ export function MobileHero() {
     el.setAttribute('autoplay', '')
     el.loop = true
     el.preload = 'auto'
-    if (el.src !== window.location.origin + '/videos/reel.webm') {
-      el.src = '/videos/reel.webm'
+    const videoSrc = import.meta.env.BASE_URL + 'videos/reel.webm'
+    if (el.src !== window.location.origin + videoSrc) {
+      el.src = videoSrc
     }
     const tryPlay = () => el.play().catch(() => {})
     tryPlay()
@@ -116,7 +118,7 @@ export function MobileHero() {
   return (
     <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
       <div className={WRAPPER_CLASS} style={{ zIndex: 0 }}>
-        <div className={frameClass}>
+        <div className={frameClass} style={frameStyle}>
           <img
             src={`${import.meta.env.BASE_URL}images/hand-phone.png`}
             alt=""
@@ -138,6 +140,8 @@ export function MobileHero() {
               width: SCREEN_BOUNDS.width,
               height: SCREEN_BOUNDS.height,
               objectFit: 'cover',
+              borderRadius: '5%',
+              overflow: 'hidden',
             }}
           />
         </div>
@@ -145,7 +149,7 @@ export function MobileHero() {
 
       {/* Foreground hand cutout sits in front of hero text (z-30) */}
       <div className={WRAPPER_CLASS} style={{ zIndex: 40 }}>
-        <div className={frameClass}>
+        <div className={frameClass} style={frameStyle}>
           <img
             src={`${import.meta.env.BASE_URL}images/hand.png`}
             alt=""

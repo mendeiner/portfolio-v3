@@ -162,7 +162,7 @@ export default function Home() {
   return (
     <>
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section id="hero-section" className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-between bg-navy px-6 md:px-10 pt-8 pb-8 overflow-x-hidden">
+      <section id="hero-section" className="relative h-[calc(100svh-4rem)] flex flex-col justify-between bg-navy px-6 md:px-10 pt-8 pb-8 overflow-x-hidden">
 
         <HeroCanvas />
 

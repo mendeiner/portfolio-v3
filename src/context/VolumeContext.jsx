@@ -9,7 +9,7 @@ function loadVolume() {
     const v = parseFloat(localStorage.getItem(STORAGE_KEY))
     if (!isNaN(v) && v >= 0.02 && v <= 1) return v
   } catch {}
-  return 0.8
+  return 0.02
 }
 
 export function VolumeProvider({ children }) {

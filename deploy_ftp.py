@@ -11,7 +11,7 @@ FTP_USER = "brunoedita"
 FTP_PASS = os.environ["FTP_PASSWORD"]
 LOCAL_DIR = "dist"
 MANIFEST_FILE = "deploy_manifest.json"
-EXCLUDE_DIRS = {"videos"}
+EXCLUDE_DIRS = set()
 EXCLUDE_FILES = {".DS_Store", "Thumbs.db"}
 
 def md5(filepath):

@@ -19,6 +19,7 @@
 
   html {
     scroll-behavior: smooth;
+    scrollbar-width: none;
   }
 
   body {
@@ -35,13 +36,7 @@
   }
 
   ::-webkit-scrollbar {
-    width: 4px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #01224D;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #A0153E;
+    display: none;
   }
 }
 
@@ -79,6 +74,12 @@
 @keyframes hand-slide-up {
   0%   { transform: translateY(100%); }
   100% { transform: translateY(8%); }
+}
+@media (max-width: 767px) {
+  @keyframes hand-slide-up {
+    0%   { transform: translateX(-10%) translateY(100%); }
+    100% { transform: translateX(-10%) translateY(8%); }
+  }
 }
 .hand-slide-up {
   animation: hand-slide-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;

@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
 const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
 
+const thumbSrc = (videoSrc) =>
+  videoSrc ? videoSrc.replace('/videos/', '/thumbnails/').replace(/\.webm$/, '.jpg') : null
+
 export default function ProjectCard({ project }) {
   const videoRef = useRef(null)
+  const [thumbVisible, setThumbVisible] = useState(true)
 
   const handleMouseEnter = () => {
     if (videoRef.current) {
@@ -17,6 +21,7 @@ export default function ProjectCard({ project }) {
     if (videoRef.current) {
       videoRef.current.pause()
       videoRef.current.currentTime = 0
+      setThumbVisible(true)
     }
   }
 
@@ -29,6 +34,7 @@ export default function ProjectCard({ project }) {
           video.play().catch(() => {})
         } else {
           video.pause()
+          setThumbVisible(true)
         }
       },
       { threshold: 0.5 }
@@ -36,6 +42,17 @@ export default function ProjectCard({ project }) {
     observer.observe(video)
     return () => observer.disconnect()
   }, [project.videoSrc])
+
+  const thumb = thumbSrc(project.videoSrc)
+  const [thumbError, setThumbError] = useState(false)
+
+  const handleThumbError = () => {
+    setThumbError(true)
+    if (videoRef.current) {
+      videoRef.current.preload = 'metadata'
+      videoRef.current.load()
+    }
+  }
 
   return (
     <Link
@@ -45,16 +62,28 @@ export default function ProjectCard({ project }) {
       onMouseLeave={!isTouch ? handleMouseLeave : undefined}
     >
       {project.videoSrc ? (
-        <video
-          ref={videoRef}
-          src={project.videoSrc}
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          onLoadedMetadata={() => { if (videoRef.current) videoRef.current.currentTime = 3 }}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        <>
+          <video
+            ref={videoRef}
+            src={project.videoSrc}
+            muted
+            loop
+            playsInline
+            preload="none"
+            onLoadedMetadata={() => { if (videoRef.current) videoRef.current.currentTime = 3 }}
+            onPlaying={() => setThumbVisible(false)}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {thumb && !thumbError && (
+            <img
+              src={thumb}
+              alt={project.client}
+              onError={handleThumbError}
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-500"
+              style={{ opacity: thumbVisible ? 1 : 0 }}
+            />
+          )}
+        </>
       ) : project.thumbnail ? (
         <img
           src={project.thumbnail}

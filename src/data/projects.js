@@ -32,16 +32,6 @@ export const projects = [
     ...videos('melissa'),
   },
   {
-    slug: 'sicredi',
-    client: 'SICREDI',
-    logo: `${BASE}logos/sicredi.png`,
-    category: 'founder',
-    brief: 'founder content — série de posicionamento',
-    year: '2025',
-    description: 'Série de conteúdo para Sicredi.',
-    ...videos('sicredi'),
-  },
-  {
     slug: 'antonielle',
     client: 'ANTONIELLE',
     logo: `${BASE}logos/antonielle.png`,
@@ -160,6 +150,16 @@ export const projects = [
     year: '2025',
     description: 'Brand film para o Zen.',
     ...videos('zen'),
+  },
+  {
+    slug: 'voices',
+    client: 'VOICES',
+    logo: `${BASE}logos/voices.png`,
+    category: 'brand',
+    brief: 'brand film',
+    year: '2025',
+    description: 'Brand film para o Voices.',
+    ...videos('voices'),
   },
 ]
 

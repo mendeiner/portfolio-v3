@@ -5,8 +5,20 @@ import { useVolume } from '../context/VolumeContext'
 
 const isHorizontalFile = (src) => src && /1080/i.test(src)
 
+const thumbSrc = (videoSrc) =>
+  videoSrc ? videoSrc.replace('/videos/', '/thumbnails/').replace(/\.webm$/, '.jpg') : null
+
 function VideoCard({ videoSrc, index, horizontal, onHover }) {
   const videoRef = useRef(null)
+  const [thumbError, setThumbError] = useState(false)
+
+  const handleThumbError = () => {
+    setThumbError(true)
+    if (videoRef.current) {
+      videoRef.current.preload = 'metadata'
+      videoRef.current.load()
+    }
+  }
 
   return (
     <div
@@ -14,16 +26,26 @@ function VideoCard({ videoSrc, index, horizontal, onHover }) {
       onClick={() => onHover({ videoSrc, index })}
     >
       {videoSrc ? (
-        <video
-          ref={videoRef}
-          src={videoSrc}
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          onLoadedMetadata={() => { if (videoRef.current) videoRef.current.currentTime = 1 }}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        <>
+          <video
+            ref={videoRef}
+            src={videoSrc}
+            muted
+            loop
+            playsInline
+            preload="none"
+            onLoadedMetadata={() => { if (videoRef.current) videoRef.current.currentTime = 1 }}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {!thumbError && (
+            <img
+              src={thumbSrc(videoSrc)}
+              onError={handleThumbError}
+              className="absolute inset-0 w-full h-full object-cover"
+              loading="lazy"
+            />
+          )}
+        </>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-plum via-plum/80 to-crimson/30" />
       )}
@@ -46,6 +68,7 @@ export default function ProjectCarousel({ project }) {
   const [isPlaying, setIsPlaying] = useState(true)
   const [flashIcon, setFlashIcon] = useState(null)
   const [isLandscape, setIsLandscape] = useState(false)
+  const [thumbVisible, setThumbVisible] = useState(false)
   const expandedRef = useRef(null)
   const flashTimer = useRef(null)
 
@@ -53,6 +76,7 @@ export default function ProjectCarousel({ project }) {
     const vid = expandedRef.current
     if (!vid || !hovered?.videoSrc) return
     setIsLandscape(false)
+    setThumbVisible(true)
     vid.volume = volume
     vid.play().catch(() => {})
     setIsPlaying(true)
@@ -123,7 +147,13 @@ export default function ProjectCarousel({ project }) {
                 playsInline
                 preload="auto"
                 onLoadedMetadata={handleMetadata}
+                onPlaying={() => setThumbVisible(false)}
                 className="absolute inset-0 w-full h-full object-contain"
+              />
+              <img
+                src={thumbSrc(hovered.videoSrc)}
+                className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-opacity duration-500"
+                style={{ opacity: thumbVisible ? 1 : 0 }}
               />
 
               {flashIcon && (
