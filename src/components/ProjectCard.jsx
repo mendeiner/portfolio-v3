@@ -107,9 +107,6 @@ export default function ProjectCard({ project }) {
         </div>
       </div>
 
-      <div className="absolute top-3 right-3 font-body text-[10px] text-paper/50 tracking-widest">
-        {project.year}
-      </div>
     </Link>
   )
 }

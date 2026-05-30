@@ -267,7 +267,7 @@ export default function Home() {
           </h2>
         </div>
 
-        <Carousel opts={{ align: 'center', containScroll: false, loop: true }}>
+        <Carousel opts={{ align: 'center', containScroll: false, loop: true, startIndex: 1 }}>
           <CarouselContent>
             {projects.map((project) => (
               <CarouselItem key={project.slug} className="basis-auto">
