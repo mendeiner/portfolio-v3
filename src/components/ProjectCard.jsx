@@ -6,7 +6,7 @@ const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: co
 const thumbSrc = (videoSrc) =>
   videoSrc ? videoSrc.replace('/videos/', '/thumbnails/').replace(/\.webm$/, '.jpg') : null
 
-export default function ProjectCard({ project }) {
+export default function ProjectCard({ project, onVideoClick }) {
   const videoRef = useRef(null)
   const [thumbVisible, setThumbVisible] = useState(true)
 
@@ -57,6 +57,7 @@ export default function ProjectCard({ project }) {
   return (
     <Link
       to={`/work/${project.slug}`}
+      onClick={onVideoClick ? (e) => { e.preventDefault(); onVideoClick(project) } : undefined}
       className="group block relative h-[60vh] w-auto aspect-reel border-2 border-crimson overflow-hidden bg-navy hover:border-signal transition-colors duration-300"
       onMouseEnter={!isTouch ? handleMouseEnter : undefined}
       onMouseLeave={!isTouch ? handleMouseLeave : undefined}

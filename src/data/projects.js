@@ -163,6 +163,17 @@ export const projects = [
   },
 ]
 
+export const baseFeed = projects.flatMap((project) => {
+  const sources = project.slides?.length
+    ? project.slides
+    : [{ videoSrc: project.videoSrc }]
+  return sources
+    .filter(s => s.videoSrc)
+    .map(s => ({ videoSrc: s.videoSrc, project }))
+})
+// kept for any external usage
+export const allVideoFeed = [...baseFeed, ...baseFeed, ...baseFeed]
+
 export const categoryLabels = {
   brand:      'brand film',
   cobertura:  'cobertura',

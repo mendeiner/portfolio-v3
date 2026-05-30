@@ -98,6 +98,9 @@
   scroll-snap-align: start;
   scroll-snap-stop: always;
   flex-shrink: 0;
+  will-change: transform;
+  transform: translateZ(0);
+  contain: layout style paint;
 }
 
 /* Vertical volume slider */

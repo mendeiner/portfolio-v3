@@ -184,7 +184,14 @@ export default function ProjectCarousel({ project }) {
 
               {/* Volume slider */}
               <div className="absolute bottom-6 right-4 flex flex-col items-center gap-2 z-10" onClick={e => e.stopPropagation()}>
-                <div style={{ height: 80, width: 36, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div
+                  style={{ height: 80, width: 36, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect()
+                    const ratio = 1 - (e.clientY - rect.top) / rect.height
+                    setVolume(Math.max(0, Math.min(1, ratio)))
+                  }}
+                >
                   <input
                     type="range"
                     min="0" max="1" step="0.01"

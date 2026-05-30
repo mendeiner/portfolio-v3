@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from 'react'
+import { useState, useEffect, useContext, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { LoadingContext } from '../App'
 import { useVolume } from '../context/VolumeContext'
@@ -6,7 +6,8 @@ import AsterMark from '../components/AsterMark'
 import { HeroCanvas } from '../components/hero3d/HeroCanvas'
 import ClientStrip from '../components/ClientStrip'
 import ProjectCard from '../components/ProjectCard'
-import { projects } from '../data/projects'
+import { projects, baseFeed } from '../data/projects'
+import ReelModal from '../components/ReelModal'
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '../components/ui/carousel'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -49,6 +50,12 @@ export default function Home() {
   const loaded = useContext(LoadingContext)
 
   const { isMuted, setIsMuted, volume, setVolume } = useVolume()
+
+  const [reelStartIndex, setReelStartIndex] = useState(null)
+  const handleVideoClick = useCallback((project) => {
+    const idx = baseFeed.findIndex(item => item.project.slug === project.slug)
+    setReelStartIndex(idx !== -1 ? idx : 0)
+  }, [])
 
   const beliefSectionRef = useRef(null)
   const para1Ref = useRef(null)
@@ -169,7 +176,14 @@ export default function Home() {
         {/* Sound toggle + volume slider */}
         <div className="absolute bottom-8 right-6 md:right-10 z-50 flex flex-col items-center gap-3 pointer-events-auto">
           {!isMuted && (
-            <div style={{ height: 80, width: 36, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div
+              style={{ height: 80, width: 36, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect()
+                const ratio = 1 - (e.clientY - rect.top) / rect.height
+                setVolume(Math.max(0, Math.min(1, ratio)))
+              }}
+            >
               <input
                 type="range"
                 min="0" max="1" step="0.01"
@@ -271,7 +285,7 @@ export default function Home() {
           <CarouselContent>
             {projects.map((project) => (
               <CarouselItem key={project.slug} className="basis-auto">
-                <ProjectCard project={project} />
+                <ProjectCard project={project} onVideoClick={handleVideoClick} />
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -362,6 +376,13 @@ export default function Home() {
           © {new Date().getFullYear()} · Farroupilha | São Paulo
         </p>
       </footer>
+      {reelStartIndex !== null && (
+        <ReelModal
+          feed={baseFeed}
+          startIndex={reelStartIndex}
+          onClose={() => setReelStartIndex(null)}
+        />
+      )}
     </>
   )
 }
