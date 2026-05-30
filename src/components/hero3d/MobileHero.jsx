@@ -18,6 +18,13 @@ const WRAPPER_CLASS =
   'absolute inset-0 flex items-end justify-center ' +
   'md:justify-end md:-mr-6 lg:-mr-10 overflow-x-hidden'
 
+function getVideoSrc() {
+  const file = window.matchMedia('(max-width: 767px)').matches
+    ? 'mobile_reel.webm'
+    : 'reel.webm'
+  return import.meta.env.BASE_URL + 'videos/' + file + '#t=0.001'
+}
+
 export function MobileHero() {
   const videoRef = useRef(null)
   const loaded = useContext(LoadingContext)
@@ -40,13 +47,13 @@ export function MobileHero() {
     el.setAttribute('autoplay', '')
     el.loop = true
     el.preload = 'auto'
-    const videoSrc = import.meta.env.BASE_URL + 'videos/reel.webm'
-    if (el.src !== window.location.origin + videoSrc) {
-      el.src = videoSrc
-    }
+    const fullSrc = getVideoSrc()
     const tryPlay = () => el.play().catch(() => {})
+    if (el.src !== window.location.origin + fullSrc) {
+      el.src = fullSrc
+      el.addEventListener('canplay', tryPlay, { once: true })
+    }
     tryPlay()
-    el.addEventListener('canplay', tryPlay, { once: true })
   }, [])
 
   const volumeRef = useRef(volume)
@@ -101,6 +108,23 @@ export function MobileHero() {
     }
   }, [])
 
+  // Swap source when the viewport crosses the mobile breakpoint (rotation, resize)
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 767px)')
+    const handleChange = () => {
+      const v = videoRef.current
+      if (!v) return
+      const newSrc = getVideoSrc()
+      if (v.src !== window.location.origin + newSrc) {
+        v.src = newSrc
+        v.load()
+        v.play().catch(() => {})
+      }
+    }
+    mql.addEventListener('change', handleChange)
+    return () => mql.removeEventListener('change', handleChange)
+  }, [])
+
   // Fallback: first user gesture starts playback if autoplay was blocked
   useEffect(() => {
     const start = () => {
@@ -142,6 +166,8 @@ export function MobileHero() {
               objectFit: 'cover',
               borderRadius: '5%',
               overflow: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              willChange: 'transform',
             }}
           />
         </div>

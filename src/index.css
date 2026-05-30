@@ -86,6 +86,20 @@
 }
 
 
+@keyframes bounce-arrow {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(8px); }
+}
+.animate-bounce-arrow {
+  animation: bounce-arrow 1.2s ease-in-out infinite;
+}
+
+.reel-item {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  flex-shrink: 0;
+}
+
 /* Vertical volume slider */
 .volume-slider {
   -webkit-appearance: none;
